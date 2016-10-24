@@ -1,7 +1,7 @@
 package jp.gr.java_conf.uzresk.aws.ope.ebs;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,78 +34,97 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
 public class EBSSnapshot {
 
-	private static final int DEFAULT_GENERATION_COUNT = 10;
-
-	private static final String EBS_TAG_BACKUP = "Backup";
-
-	private static final String EBS_TAG_GENERATION_COUNT = "GenerationCount";
-
 	private static ClientConfiguration cc = new ClientConfiguration();
 
-	public void create(Target target, Context context) {
+	public void createSnapshotFromVolumeId(VolumeIdRequest volumeIdRequest, Context context) {
 
 		LambdaLogger logger = context.getLogger();
-		logger.log("EBS Snapsthot Start. backup target[" + target.getTarget() + "]");
+		logger.log("create ebs snapshot from volumeid Start. backup target[" + volumeIdRequest + "]");
+
+		createSnapshot(volumeIdRequest.getVolumeId(), volumeIdRequest.getGenerationCount(), context);
+	}
+
+	public void createSnapshotFromVolumeIds(VolumeIdRequests volumeIdRequests, Context context) {
+
+		LambdaLogger logger = context.getLogger();
+		logger.log("create ebs snapshot from volumeids Start. backup target[" + volumeIdRequests + "]");
+
+		for (VolumeIdRequest volumeIdRequest : volumeIdRequests.getVolumeIdRequests()) {
+			createSnapshotFromVolumeId(volumeIdRequest, context);
+		}
+	}
+
+	public void createSnapshotFromTagName(TagNameRequest tagNameRequest, Context context) {
+
+		LambdaLogger logger = context.getLogger();
+		logger.log("create ebs snapshot from tag name Start. backup target[" + tagNameRequest + "]");
 
 		String regionName = System.getenv("AWS_DEFAULT_REGION");
-
 		AmazonEC2Async client = RegionUtils.getRegion(regionName).createClient(AmazonEC2AsyncClient.class,
 				new DefaultAWSCredentialsProviderChain(), cc);
 
-		List<Volume> volumes = describeBackupVolumes(client, target);
+		try {
+			List<Volume> volumes = describeBackupVolumes(client, tagNameRequest);
 
-		volumes.stream()
-				.forEach(s -> snapshot(client, s.getVolumeId(), s.getTags().stream()
-						.filter(tags -> EBS_TAG_GENERATION_COUNT.equals(tags.getKey())).findFirst().get().getValue(),
-						context));
-
-		client.shutdown();
-		logger.log("EBS Snapsthot End.");
+			for (Volume volume : volumes) {
+				createSnapshot(volume.getVolumeId(), tagNameRequest.getGenerationCount(), context);
+			}
+		} finally {
+			client.shutdown();
+		}
 	}
 
-	private List<Volume> describeBackupVolumes(AmazonEC2Async client, Target target) {
+	private List<Volume> describeBackupVolumes(AmazonEC2Async client, TagNameRequest target) {
 
-		Filter tagKey = new Filter().withName("tag-key").withValues(EBS_TAG_BACKUP);
-		Filter tagValue = new Filter().withName("tag-value").withValues(target.getTarget());
+		Filter tagKey = new Filter().withName("tag-key").withValues("Backup");
+		Filter tagValue = new Filter().withName("tag-value").withValues(target.getTagName());
 		DescribeVolumesRequest req = new DescribeVolumesRequest().withFilters(tagKey, tagValue);
 		DescribeVolumesResult result = client.describeVolumes(req);
 
 		return result.getVolumes();
 	}
 
-	private void snapshot(AmazonEC2Async client, String volumeId, String generationCountStr, Context context) {
+	private void createSnapshot(String volumeId, int generationCount, Context context) {
 
 		LambdaLogger logger = context.getLogger();
 
-		// To get the snapshot
-		String lambdaFunctionName = context.getFunctionName();
-		String description = "Created by CloudWatchEvents schedule Lambda(" + lambdaFunctionName + ")";
-		Future<CreateSnapshotResult> result = client
-				.createSnapshotAsync(new CreateSnapshotRequest(volumeId, description));
-		Snapshot snapshot = null;
+		String regionName = System.getenv("AWS_DEFAULT_REGION");
+		AmazonEC2Async client = RegionUtils.getRegion(regionName).createClient(AmazonEC2AsyncClient.class,
+				new DefaultAWSCredentialsProviderChain(), cc);
+
 		try {
-			// waiting for snapshot
-			while (!result.isDone()) {
-				Thread.sleep(500);
+			// To get the snapshot
+			String lambdaFunctionName = context.getFunctionName();
+			String description = "Created by Lambda(" + lambdaFunctionName + ")";
+			Future<CreateSnapshotResult> result = client
+					.createSnapshotAsync(new CreateSnapshotRequest(volumeId, description));
+			Snapshot snapshot = null;
+			try {
+				// waiting for snapshot
+				while (!result.isDone()) {
+					Thread.sleep(500);
+				}
+				snapshot = result.get().getSnapshot();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new RuntimeException("create snapshot error. " + e.getMessage());
 			}
-			snapshot = result.get().getSnapshot();
-		} catch (InterruptedException | ExecutionException e) {
-			logger.log("ERROR:create snapshot:" + e.getMessage());
-		}
 
-		String snapshotId = snapshot.getSnapshotId();
-		logger.log("EBS snapshot created. SnapshotId[" + snapshotId + "] VolumeId[" + volumeId + "]");
+			String snapshotId = snapshot.getSnapshotId();
+			logger.log("EBS snapshot created. SnapshotId[" + snapshotId + "] VolumeId[" + volumeId + "]");
 
-		// add a tag to the snapshot
-		attachSnapshotTags(client, volumeId, snapshotId);
+			// add a tag to the snapshot
+			attachSnapshotTags(client, volumeId, snapshotId);
 
-		int generationCount = DEFAULT_GENERATION_COUNT;
-		try {
-			generationCount = Integer.parseInt(generationCountStr);
+			pargeEbsSnapshot(client, volumeId, generationCount, context);
+
+			logger.log("[SUCCESS][EBSSnapshot][" + volumeId + "] EBS Snapshot has completed successfully.");
+
 		} catch (Exception e) {
-			logger.log("generation count error. [" + generationCountStr + "]");
+			logger.log("[ERROR][EBSSnapshot][" + volumeId + "] message[" + e.getMessage() + "] stackTrace["
+					+ getStackTrace(e) + "]");
+		} finally {
+			client.shutdown();
 		}
-		pargeEbsSnapshot(client, volumeId, generationCount, context);
 	}
 
 	private void attachSnapshotTags(AmazonEC2Async client, String volumeId, String snapshotId) {
@@ -113,8 +132,6 @@ public class EBSSnapshot {
 		List<Tag> tags = new ArrayList<Tag>();
 		tags.add(new Tag("VolumeId", volumeId));
 		tags.add(new Tag("BackupType", "auto"));
-		String requestDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
-		tags.add(new Tag("RequestDate", requestDate));
 
 		CreateTagsRequest snapshotTagsRequest = new CreateTagsRequest().withResources(snapshotId);
 		snapshotTagsRequest.setTags(tags);
@@ -164,4 +181,13 @@ public class EBSSnapshot {
 		DeleteSnapshotRequest request = new DeleteSnapshotRequest(snapshotId);
 		ec2.deleteSnapshot(request);
 	}
+
+	protected String getStackTrace(Exception e) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		pw.flush();
+		return sw.toString();
+	}
+
 }
