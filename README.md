@@ -12,6 +12,10 @@ Provides
     - You can be sure that the messages that have been made to SQS regularly instance by polling has been successfully start or stop.
 - [EBSSnapshot](./ebs-snapshot/README.md)
     - Do the acquisition and generation management of ebssnapshot at the timing set by the CloudWatchEvent.
+    - To identify the target of volume to get a snapshot There are three ways.
+    - 1. To specify the volume ID in json
+    - 2. To specify multiple volume ID in json
+    - 3. To specify the tag that has been granted to the EBS in jso
 - [DeregisterAMI](./deregister-ami/README.md)
      - At the timing of the AMI is deregistration to remove the EBS snapshot
 - [RunCommand](./run-command/README.md)
