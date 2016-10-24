@@ -131,7 +131,7 @@ public class EBSSnapshot {
 
 		List<Tag> tags = new ArrayList<Tag>();
 		tags.add(new Tag("VolumeId", volumeId));
-		tags.add(new Tag("BackupType", "auto"));
+		tags.add(new Tag("BackupType", "snapshot"));
 
 		CreateTagsRequest snapshotTagsRequest = new CreateTagsRequest().withResources(snapshotId);
 		snapshotTagsRequest.setTags(tags);
@@ -144,9 +144,11 @@ public class EBSSnapshot {
 		logger.log("Parge snapshot start. VolumeId[" + volumeId + "] generationCount[" + generationCount + "]");
 
 		// volume id をキーにsnapshotの一覧を取得します。
-		Filter filter = new Filter().withName("volume-id").withValues(volumeId);
-		filter.withName("tag:VolumeId").withValues(volumeId);
-		DescribeSnapshotsRequest snapshotRequest = new DescribeSnapshotsRequest().withFilters(filter);
+		List<Filter> filters = new ArrayList<>();
+		filters.add(new Filter().withName("volume-id").withValues(volumeId));
+		filters.add(new Filter().withName("tag:VolumeId").withValues(volumeId));
+		filters.add(new Filter().withName("tag:BackupType").withValues("snapshot"));
+		DescribeSnapshotsRequest snapshotRequest = new DescribeSnapshotsRequest().withFilters(filters);
 		DescribeSnapshotsResult snapshotResult = client.describeSnapshots(snapshotRequest);
 
 		// snapshot作成開始日でソートします。（古い→新しい）

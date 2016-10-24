@@ -42,19 +42,61 @@ public class EBSCopySnapshot {
 				snapshotIdRequest.getGenerationCount(), context);
 	}
 
+	public void copySnapshotFromSnapshotIds(SnapshotIdRequests snapshotIdRequests, Context context) {
+		for (SnapshotIdRequest snapshotIdRequest : snapshotIdRequests.getSnapshotIdRequests()) {
+			copySnapshotFromSnapshotId(snapshotIdRequest, context);
+		}
+	}
 
-	// public void createSnapshotFromVolumeIds(SnapshotIdRequests
-	// volumeIdRequests, Context context) {
-	//
-	// LambdaLogger logger = context.getLogger();
-	// logger.log("create ebs snapshot from volumeids Start. backup target[" +
-	// volumeIdRequests + "]");
-	//
-	// for (SnapshotIdRequest volumeIdRequest :
-	// volumeIdRequests.getVolumeIdRequests()) {
-	// createSnapshotFromVolumeId(volumeIdRequest, context);
-	// }
-	// }
+	/**
+	 * Find the snapshot the volumeId the key, to get a copy of the latest
+	 * Snapshot
+	 *
+	 * @param volumeIdRequest
+	 *            VolumeIdRequest
+	 * @param context
+	 *            Context
+	 */
+	public void copySnapshotFromVolumeId(VolumeIdRequest volumeIdRequest, Context context) {
+
+		LambdaLogger logger = context.getLogger();
+
+		String regionName = System.getenv("AWS_DEFAULT_REGION");
+		AmazonEC2Async client = RegionUtils.getRegion(regionName).createClient(AmazonEC2AsyncClient.class,
+				new DefaultAWSCredentialsProviderChain(), cc);
+
+		try {
+			String volumeId = volumeIdRequest.getVolumeId();
+			List<Filter> filters = new ArrayList<>();
+			filters.add(new Filter().withName("volume-id").withValues(volumeId));
+			filters.add(new Filter().withName("tag:VolumeId").withValues(volumeId));
+			filters.add(new Filter().withName("tag:BackupType").withValues("snapshot"));
+			DescribeSnapshotsRequest snapshotRequest = new DescribeSnapshotsRequest().withFilters(filters);
+			DescribeSnapshotsResult snapshotResult = client.describeSnapshots(snapshotRequest);
+
+			// sort and get latest snapshot
+			List<Snapshot> snapshots = snapshotResult.getSnapshots();
+			Collections.sort(snapshots, new SnapshotComparator());
+			Snapshot snapshot = snapshots.get(snapshots.size() - 1);
+
+			String sourceSnapshotId = snapshot.getSnapshotId();
+
+			copySnapshot(sourceSnapshotId, volumeIdRequest.getDestinationRegion(), volumeIdRequest.getGenerationCount(),
+					context);
+
+		} catch (Exception e) {
+			logger.log("[ERROR][EBSCopySnapshot][" + volumeIdRequest.getVolumeId() + "] message[" + e.getMessage()
+					+ "] stackTrace[" + getStackTrace(e) + "]");
+		} finally {
+			client.shutdown();
+		}
+	}
+
+	public void copySnapshotFromVolumeIds(VolumeIdRequests volumeIdRequests, Context context) {
+		for (VolumeIdRequest volumeIdReuest : volumeIdRequests.getVolumeIdRequest()) {
+			copySnapshotFromVolumeId(volumeIdReuest, context);
+		}
+	}
 
 	private void copySnapshot(String sourceSnapshotId, String destinationRegion, int generationCount, Context context) {
 
@@ -115,8 +157,8 @@ public class EBSCopySnapshot {
 
 		List<Tag> tags = new ArrayList<Tag>();
 		tags.addAll(sourceSnapshotTags);
-		tags.add(new Tag("SourceSnapshotId", snapshotId));
-		tags.add(new Tag("BackupType", "copy-snapshot")); // overwrite BackupType
+		tags.add(new Tag("SourceSnapshotId", sourceSnapshotId));
+		tags.add(new Tag("BackupType", "copy-snapshot")); // overwrite
 
 		CreateTagsRequest snapshotTagsRequest = new CreateTagsRequest().withResources(snapshotId);
 		snapshotTagsRequest.setTags(tags);

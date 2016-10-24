@@ -5,8 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class SnapshotIdRequests {
+public class VolumeIdRequests {
 
-	private List<SnapshotIdRequest> snapshotIdRequests;
-
+	private List<VolumeIdRequest> volumeIdRequest;
 }
