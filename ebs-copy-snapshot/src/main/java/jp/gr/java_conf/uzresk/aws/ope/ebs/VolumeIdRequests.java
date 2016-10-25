@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class VolumeIdRequests {
 
-	private List<VolumeIdRequest> volumeIdRequest;
+	private List<VolumeIdRequest> volumeIdRequests;
 }

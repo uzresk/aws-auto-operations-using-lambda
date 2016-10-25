@@ -77,6 +77,10 @@ public class EBSCopySnapshot {
 			// sort and get latest snapshot
 			List<Snapshot> snapshots = snapshotResult.getSnapshots();
 			Collections.sort(snapshots, new SnapshotComparator());
+			int snapshotsSize = snapshots.size();
+			if (snapshotsSize == 0) {
+				throw new RuntimeException("The copy source snapshot can not be found");
+			}
 			Snapshot snapshot = snapshots.get(snapshots.size() - 1);
 
 			String sourceSnapshotId = snapshot.getSnapshotId();
@@ -93,7 +97,7 @@ public class EBSCopySnapshot {
 	}
 
 	public void copySnapshotFromVolumeIds(VolumeIdRequests volumeIdRequests, Context context) {
-		for (VolumeIdRequest volumeIdReuest : volumeIdRequests.getVolumeIdRequest()) {
+		for (VolumeIdRequest volumeIdReuest : volumeIdRequests.getVolumeIdRequests()) {
 			copySnapshotFromVolumeId(volumeIdReuest, context);
 		}
 	}
