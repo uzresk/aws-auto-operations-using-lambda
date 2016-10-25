@@ -44,38 +44,50 @@ To create a role that is set to LambdaFunction (LambdaEBSSnapshotRole)
         ]
     }
 
+create EBS Snapshot from volume-id
+---
+
 To create a LambdaFunction
 
-- Name: EBSSnapshot
+- Name: EBSSnapshotFromVolumeId
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSSnapshot::create
+- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSSnapshot::createSnapshotFromVolumeId
 - Role: LambdaEBSSnapshotRole
 - Memory: 512
 - Timeout: According to the number of target
 
-create EBS Snapshot from volume-id
----
-
 Setting the Cloudwatch event
 
 - EventSource: Schedule（Any Timing）
 - Target：Lambda function -> EBSSnapshotFromVolumeId
 - Configure input: constant(JSON text)
 
+ ```
     {
       "volumeId": "vol-xxxxxxxxxxxxxxxxx",
       "generationCount": "2"
     }
+  ```
 
 create EBS Snapshot from multiple volume-id
 ---
 
+To create a LambdaFunction
+
+- Name: EBSSnapshotFromVolumeIds
+- Runtime: Java8
+- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSSnapshot::createSnapshotFromVolumeIds
+- Role: LambdaEBSSnapshotRole
+- Memory: 512
+- Timeout: According to the number of target
+
 Setting the Cloudwatch event
 
 - EventSource: Schedule（Any Timing）
-- Target：Lambda function -> EBSSnapshotFromVolumeId
+- Target：Lambda function -> EBSSnapshotFromVolumeIds
 - Configure input: constant(JSON text)
 
+```
     {
       "volumeIdRequests": [
         {
@@ -88,27 +100,42 @@ Setting the Cloudwatch event
         }
       ]
     }
+ ```
 
 create EBS Snapshot from tag name
 ---
 
+To create a LambdaFunction
+
+- Name: EBSSnapshotFromTagName
+- Runtime: Java8
+- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSSnapshot::createSnapshotFromTagName
+- Role: LambdaEBSSnapshotRole
+- Memory: 512
+- Timeout: According to the number of target
+
 Setting the Cloudwatch event
 
 - EventSource: Schedule（Any Timing）
-- Target：Lambda function -> EBSSnapshotFromVolumeId
+- Target：Lambda function -> EBSSnapshotFromTagName
 - Configure input: constant(JSON text)
 
+ ```
     {
       "tagName": "test",
       "generationCount": 2
     }
-
+ ```
+ 
 Setting the Backup tag and GenerationCount tag in Volume to be EBSSnapshot target.
 
 - The GenerationCount to set the number of generation management. If you omit the GenerationCount, generation management number is 10 by default
 - VolumeTags examples
 
     "Backup":"test",
+
+
+
 
 
 
