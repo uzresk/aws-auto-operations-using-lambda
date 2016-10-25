@@ -1,17 +1,16 @@
-EBS Snapshot acquisition and generation management
+EBS Copy Snapshot acquisition and generation management
 ==================================================
 
-Get the EBSSnapshot, perform the generation management.
+Get the EBS Copy Snapshot, perform the generation management.
 To identify the target of volume to get a snapshot There are three ways.
-1. To specify the volume ID in json
-2. To specify multiple volume ID in json
-3. To specify the tag that has been granted to the EBS in json
-
+- 1. To specify the volume ID in json
+- 2. To specify multiple volume ID in json
+- 3. To specify the snapshot ID in json
 
 Usage
 -----
 
-To create a role that is set to LambdaFunction (LambdaEBSSnapshotRole)
+To create a role that is set to LambdaFunction (LambdaEBSCopySnapshotRole)
 
     {
         "Version": "2012-10-17",
@@ -32,6 +31,7 @@ To create a role that is set to LambdaFunction (LambdaEBSSnapshotRole)
                 "Action": [
                     "ec2:DescribeVolumes",
                     "ec2:DescribeSnapshots",
+                    "ec2:CopySnapshot",
                     "ec2:CreateSnapshot",
                     "ec2:CreateTags",
                     "ec2:DescribeTags",
@@ -44,46 +44,59 @@ To create a role that is set to LambdaFunction (LambdaEBSSnapshotRole)
         ]
     }
 
+
+create EBS CopySnapshot from volume-id
+---
+
 To create a LambdaFunction
 
-- Name: EBSSnapshot
+- Name: EBSCopySnapshotFromVolumeId
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSSnapshot::create
-- Role: LambdaEBSSnapshotRole
+- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSCopySnapshot::copySnapshotFromVolumeId
+- Role: LambdaEBSCopySnapshotRole
 - Memory: 512
 - Timeout: According to the number of target
-
-create EBS Snapshot from volume-id
----
 
 Setting the Cloudwatch event
 
 - EventSource: Schedule（Any Timing）
-- Target：Lambda function -> EBSSnapshotFromVolumeId
+- Target：Lambda function -> EBSCopySnapshotFromVolumeId
 - Configure input: constant(JSON text)
 
     {
       "volumeId": "vol-xxxxxxxxxxxxxxxxx",
+      "destinationRegion": "ap-northeast-1",
       "generationCount": "2"
     }
 
-create EBS Snapshot from multiple volume-id
+create EBS CopySnapshot from multiple volume-id
 ---
+
+To create a LambdaFunction
+
+- Name: EBSCopySnapshotFromVolumeIds
+- Runtime: Java8
+- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSCopySnapshot::copySnapshotFromVolumeIds
+- Role: LambdaEBSCopySnapshotRole
+- Memory: 512
+- Timeout: According to the number of target
 
 Setting the Cloudwatch event
 
 - EventSource: Schedule（Any Timing）
-- Target：Lambda function -> EBSSnapshotFromVolumeId
+- Target：Lambda function -> EBSCopySnapshotFromVolumeIds
 - Configure input: constant(JSON text)
 
     {
       "volumeIdRequests": [
         {
           "volumeId": "vol-xxxxxxxxxxxxxxxxx",
+          "destinationRegion" : "ap-northeast-1",
           "generationCount": "2"
         },
         {
           "volumeId": "vol-yyyyyyyyyyyyyyyyy",
+          "destinationRegion" : "ap-northeast-1",
           "generationCount": "3"
         }
       ]
@@ -92,23 +105,25 @@ Setting the Cloudwatch event
 create EBS Snapshot from tag name
 ---
 
+To create a LambdaFunction
+
+- Name: EBSCopySnapshotFromSnapshotId
+- Runtime: Java8
+- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSCopySnapshot::copySnapshotFromSnapshotId
+- Role: LambdaEBSCopySnapshotRole
+- Memory: 512
+- Timeout: According to the number of target
+
 Setting the Cloudwatch event
 
 - EventSource: Schedule（Any Timing）
-- Target：Lambda function -> EBSSnapshotFromVolumeId
+- Target：Lambda function -> EBSCopySnapshotFromSnapshotId
 - Configure input: constant(JSON text)
 
     {
-      "tagName": "test",
-      "generationCount": 2
+      "sourceSnapshotId": "snap-xxxxxxxxxxxxxxx",
+      "destinationRegion": "ap-northeast-1",
+      "generationCount": "3"
     }
-
-Setting the Backup tag and GenerationCount tag in Volume to be EBSSnapshot target.
-
-- The GenerationCount to set the number of generation management. If you omit the GenerationCount, generation management number is 10 by default
-- VolumeTags examples
-
-    "Backup":"test",
-
 
 
