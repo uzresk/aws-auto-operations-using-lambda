@@ -3,9 +3,9 @@ EBS Snapshot acquisition and generation management
 
 Get the EBSSnapshot, perform the generation management.
 To identify the target of volume to get a snapshot There are three ways.
-1. To specify the volume ID in json
-2. To specify multiple volume ID in json
-3. To specify the tag that has been granted to the EBS in json
+- 1. [To specify the volume ID in json](#create-ebs-snapshot-from-volume-id)
+- 2. [To specify multiple volume ID in json](#create-ebs-snapshot-from-multiple-volume-id)
+- 3. [To specify the tag that has been granted to the EBS in json](#create-ebs-snapshot-from-tag-name)
 
 
 Usage
