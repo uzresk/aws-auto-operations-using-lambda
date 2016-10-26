@@ -64,12 +64,11 @@ public class Stop extends InstanceOperation {
 					+ "CheckInstanceStateRequest[" + checkInstanceStateRequest + "]");
 		}
 
-		AmazonSQSAsync client = createSQSClient();
-		client.setEndpoint(sqsEndpoint);
-
 		// Only the specified number, reliably acquired
 		int numberOfMessages = checkInstanceStateRequest.getNumberOfMessages();
 		for (int i = 0; i < numberOfMessages; i++) {
+			AmazonSQSAsync client = createSQSClient();
+			client.setEndpoint(sqsEndpoint);
 			try {
 				String queueUrl = client.createQueue(queueName).getQueueUrl();
 
