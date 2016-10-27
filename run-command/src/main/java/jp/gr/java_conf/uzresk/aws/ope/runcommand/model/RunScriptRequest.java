@@ -1,4 +1,4 @@
-package jp.gr.java_conf.uzresk.aws.ope.runcommand;
+package jp.gr.java_conf.uzresk.aws.ope.runcommand.model;
 
 import java.util.List;
 import java.util.Map;

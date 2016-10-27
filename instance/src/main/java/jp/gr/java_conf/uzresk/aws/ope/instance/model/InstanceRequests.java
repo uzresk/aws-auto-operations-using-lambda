@@ -1,4 +1,4 @@
-package jp.gr.java_conf.uzresk.aws.ope.instance;
+package jp.gr.java_conf.uzresk.aws.ope.instance.model;
 
 import java.util.List;
 

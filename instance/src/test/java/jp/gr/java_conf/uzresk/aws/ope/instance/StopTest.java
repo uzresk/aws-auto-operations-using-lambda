@@ -6,6 +6,8 @@ import org.junit.runners.JUnit4;
 
 import com.amazonaws.ClientConfiguration;
 
+import jp.gr.java_conf.uzresk.aws.ope.instance.model.InstanceRequest;
+
 @RunWith(JUnit4.class)
 public class StopTest {
 

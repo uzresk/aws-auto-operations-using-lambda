@@ -12,6 +12,8 @@ import org.junit.runners.JUnit4;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.services.simplesystemsmanagement.model.NotificationEvent;
 
+import jp.gr.java_conf.uzresk.aws.ope.runcommand.model.RunScriptRequest;
+
 @RunWith(JUnit4.class)
 public class RunCommandTest {
 

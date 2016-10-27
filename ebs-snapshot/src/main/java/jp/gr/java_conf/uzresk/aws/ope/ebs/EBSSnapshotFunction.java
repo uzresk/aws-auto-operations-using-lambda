@@ -32,6 +32,10 @@ import com.amazonaws.services.ec2.model.Volume;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
+import jp.gr.java_conf.uzresk.aws.ope.ebs.model.TagNameRequest;
+import jp.gr.java_conf.uzresk.aws.ope.ebs.model.VolumeIdRequest;
+import jp.gr.java_conf.uzresk.aws.ope.ebs.model.VolumeIdRequests;
+
 public class EBSSnapshotFunction {
 
 	private static ClientConfiguration cc = new ClientConfiguration();

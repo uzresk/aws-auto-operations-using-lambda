@@ -24,6 +24,9 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jp.gr.java_conf.uzresk.aws.ope.instance.model.InstanceCheckStateRequest;
+import jp.gr.java_conf.uzresk.aws.ope.instance.model.InstanceRequest;
+
 public class InstanceOperation {
 
 	private ClientConfiguration cc;

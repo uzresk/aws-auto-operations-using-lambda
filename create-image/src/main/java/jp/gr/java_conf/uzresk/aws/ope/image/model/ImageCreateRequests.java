@@ -1,4 +1,4 @@
-package jp.gr.java_conf.uzresk.aws.ope.image;
+package jp.gr.java_conf.uzresk.aws.ope.image.model;
 
 import java.util.List;
 

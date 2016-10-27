@@ -12,6 +12,10 @@ import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 
+import jp.gr.java_conf.uzresk.aws.ope.instance.model.InstanceCheckStateRequest;
+import jp.gr.java_conf.uzresk.aws.ope.instance.model.InstanceRequest;
+import jp.gr.java_conf.uzresk.aws.ope.instance.model.InstanceRequests;
+
 public class InstanceStopFunction extends InstanceOperation {
 
 	public void requests(InstanceRequests instanceRequests, Context context) {

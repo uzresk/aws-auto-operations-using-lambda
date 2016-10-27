@@ -20,6 +20,8 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jp.gr.java_conf.uzresk.aws.ope.image.model.DeregisterImageRequest;
+
 public class DeregisterImageFunction implements RequestStreamHandler {
 
 	private static ClientConfiguration cc = new ClientConfiguration();

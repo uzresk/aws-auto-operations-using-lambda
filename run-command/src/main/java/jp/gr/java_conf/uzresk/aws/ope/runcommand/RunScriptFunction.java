@@ -15,6 +15,8 @@ import com.amazonaws.services.simplesystemsmanagement.model.NotificationConfig;
 import com.amazonaws.services.simplesystemsmanagement.model.SendCommandRequest;
 import com.amazonaws.services.simplesystemsmanagement.model.SendCommandResult;
 
+import jp.gr.java_conf.uzresk.aws.ope.runcommand.model.RunScriptRequest;
+
 public class RunScriptFunction {
 
 	private ClientConfiguration cc;
