@@ -4,18 +4,18 @@ import java.util.Arrays;
 import java.util.concurrent.Future;
 
 import com.amazonaws.services.ec2.AmazonEC2Async;
-import com.amazonaws.services.ec2.model.StartInstancesRequest;
-import com.amazonaws.services.ec2.model.StartInstancesResult;
+import com.amazonaws.services.ec2.model.StopInstancesRequest;
+import com.amazonaws.services.ec2.model.StopInstancesResult;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 
-public class Start extends InstanceOperation {
+public class InstanceStopFunction extends InstanceOperation {
 
 	public void requests(InstanceRequests instanceRequests, Context context) {
-		for (InstanceRequest instanceRequest : instanceRequests.getInstanceRequest()) {
+		for (InstanceRequest instanceRequest : instanceRequests.getInstanceRequests()) {
 			request(instanceRequest, context);
 		}
 	}
@@ -31,26 +31,26 @@ public class Start extends InstanceOperation {
 				return;
 			}
 
-			if (!"stopped".equals(instanceState)) {
-				logger.log("instance state is not stopped.");
+			if (!"running".equals(instanceState)) {
+				logger.log("instance state is not running.");
 			} else {
-				// start ec2 instance request.
-				startInstance(instanceRequest, context);
+				// stop ec2 instance request.
+				stopInstance(instanceRequest, context);
 			}
 
 			// create queue
 			createQueueMessage(instanceRequest, context);
 
-			logger.log("[SUCCESS][" + instanceRequest.getInstanceId() + "][StartInstanceRequest]"
-					+ "Start request of the instance has completed successfully." + instanceRequest);
+			logger.log("[SUCCESS][" + instanceRequest.getInstanceId() + "][StopInstanceRequest]"
+					+ "Stop request of the instance has completed successfully." + instanceRequest);
 
 		} catch (Exception e) {
-			logger.log("[ERROR][" + instanceRequest.getInstanceId() + "][StartInstanceRequest] message["
-					+ e.getMessage() + "] stackTrace[" + getStackTrace(e) + "]" + instanceRequest);
+			logger.log("[ERROR][" + instanceRequest.getInstanceId() + "][StopInstanceRequest] message[" + e.getMessage()
+					+ "] stackTrace[" + getStackTrace(e) + "]" + instanceRequest);
 		}
 	}
 
-	public void checkInstanceState(CheckInstanceStateRequest checkInstanceStateRequest, Context context) {
+	public void checkInstanceState(InstanceCheckStateRequest checkInstanceStateRequest, Context context) {
 
 		LambdaLogger logger = context.getLogger();
 
@@ -59,7 +59,7 @@ public class Start extends InstanceOperation {
 
 		// illegal parameter
 		if (queueName == null || sqsEndpoint == null) {
-			logger.log("[ERROR][checkInstanceStatus][running]QueueName or SQSEndpoint is not found Parameter. ");
+			logger.log("[ERROR][checkInstanceStatus][stopped]QueueName or SQSEndpoint is not found Parameter. ");
 			throw new IllegalArgumentException("QueueName or SQSEndpoint is not found Parameter. "
 					+ "CheckInstanceStateRequest[" + checkInstanceStateRequest + "]");
 		}
@@ -79,34 +79,32 @@ public class Start extends InstanceOperation {
 					Thread.sleep(100);
 				}
 				result.get().getMessages().stream()
-						.forEach(s -> checkInstanceState(s, "running", checkInstanceStateRequest, context));
+						.forEach(s -> checkInstanceState(s, "stopped", checkInstanceStateRequest, context));
 
 			} catch (Exception e) {
-				logger.log("[ERROR][checkInstanceStatus][running]message[" + e.getMessage() + "] stackTrace["
+				logger.log("[ERROR][checkInstanceStatus][stopped]message[" + e.getMessage() + "] stackTrace["
 						+ getStackTrace(e) + "] CheckInstanceStateRequest[" + checkInstanceStateRequest + "]");
-
 			} finally {
 				client.shutdown();
 			}
 		}
 	}
 
-	StartInstancesResult startInstance(InstanceRequest instanceRequest, Context context) {
+	StopInstancesResult stopInstance(InstanceRequest instanceRequest, Context context) {
 		AmazonEC2Async client = createEC2Client();
 		try {
-			StartInstancesRequest req = new StartInstancesRequest();
+			StopInstancesRequest req = new StopInstancesRequest();
 			req.setInstanceIds(Arrays.asList(instanceRequest.getInstanceId()));
-			Future<StartInstancesResult> result = client.startInstancesAsync(req);
+			Future<StopInstancesResult> result = client.stopInstancesAsync(req);
 			while (!result.isDone()) {
 				Thread.sleep(100);
 			}
 			return result.get();
 
 		} catch (Exception e) {
-			throw new RuntimeException("unexpected error has occured in the start instance request.", e);
+			throw new RuntimeException("unexpected error has occured in the stop instance request.", e);
 		} finally {
 			client.shutdown();
 		}
 	}
-
 }

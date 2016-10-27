@@ -21,7 +21,7 @@ public class StopTest {
         cc.setProxyHost("PROXY_HOST");
         cc.setProxyPort(8080);
 
-        Stop stop = new Stop();
+        InstanceStopFunction stop = new InstanceStopFunction();
         stop.setClientConfiguration(cc);
 //		stop.stop(instanceRequest, new TestContext());
     }
@@ -39,7 +39,7 @@ public class StopTest {
         cc.setProxyHost("PROXY_HOST");
         cc.setProxyPort(8080);
 
-        Stop stop = new Stop();
+        InstanceStopFunction stop = new InstanceStopFunction();
         stop.setClientConfiguration(cc);
 //		stop.checkStatusInstance(instanceRequest, new TestContext());
     }
@@ -53,7 +53,7 @@ public class StopTest {
         cc.setProxyHost("PROXY_HOST");
         cc.setProxyPort(8080);
 
-        Stop stop = new Stop();
+        InstanceStopFunction stop = new InstanceStopFunction();
         stop.setClientConfiguration(cc);
         // stop.createQueue(instanceRequest, new TestContext());
     }
@@ -68,7 +68,7 @@ public class StopTest {
         cc.setProxyHost("PROXY_HOST");
         cc.setProxyPort(8080);
 
-        Stop stop = new Stop();
+        InstanceStopFunction stop = new InstanceStopFunction();
         stop.setClientConfiguration(cc);
         // stop.snsOnSuccess(instanceRequest, "test message", "subject", new
         // TestContext());

@@ -46,7 +46,7 @@ public class InstanceOperation {
 	}
 
 	public void checkInstanceState(Message message, String stateName,
-			CheckInstanceStateRequest checkInstanceStateRequest, Context context) {
+			InstanceCheckStateRequest checkInstanceStateRequest, Context context) {
 
 		LambdaLogger logger = context.getLogger();
 
@@ -130,7 +130,7 @@ public class InstanceOperation {
 		}
 	}
 
-	protected void deleteQueueMessage(Message message, CheckInstanceStateRequest checkInstanceStateRequest,
+	protected void deleteQueueMessage(Message message, InstanceCheckStateRequest checkInstanceStateRequest,
 			Context context) {
 
 		AmazonSQSAsync client = createSQSClient();
