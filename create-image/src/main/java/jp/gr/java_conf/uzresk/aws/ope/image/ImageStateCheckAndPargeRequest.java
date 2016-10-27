@@ -1,9 +1,9 @@
-package jp.gr.java_conf.uzresk.aws.ope.ami;
+package jp.gr.java_conf.uzresk.aws.ope.image;
 
 import lombok.Data;
 
 @Data
-public class CheckAMIStateRequest {
+public class ImageStateCheckAndPargeRequest {
 
 	private String queueName;
 

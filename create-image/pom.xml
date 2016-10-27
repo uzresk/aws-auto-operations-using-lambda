@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>jp.gr.java_conf.uzresk.aws.ope</groupId>
-	<artifactId>instance</artifactId>
+	<artifactId>image</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>run-command</name>
+	<name>image</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

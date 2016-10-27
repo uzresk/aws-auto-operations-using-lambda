@@ -1,9 +1,9 @@
-package jp.gr.java_conf.uzresk.aws.ope.ami;
+package jp.gr.java_conf.uzresk.aws.ope.image;
 
 import lombok.Data;
 
 @Data
-public class CreateAMIRequest {
+public class ImageCreateRequest {
 
 	private String instanceId;
 
@@ -15,7 +15,7 @@ public class CreateAMIRequest {
 
 	private String sqsEndpoint;
 
-	private int amiCreatedCheckTimeoutSec = 300;
+	private int imageCreatedTimeoutSec = 300;
 
 	private int generationCount = 5;
 
