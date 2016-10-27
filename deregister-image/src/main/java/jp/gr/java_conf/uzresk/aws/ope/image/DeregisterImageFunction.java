@@ -1,6 +1,5 @@
 package jp.gr.java_conf.uzresk.aws.ope.image;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -26,28 +25,31 @@ public class DeregisterImageFunction implements RequestStreamHandler {
 	private static ClientConfiguration cc = new ClientConfiguration();
 
 	@Override
-	public void handleRequest(InputStream is, OutputStream os, Context context) throws IOException {
-
-		ObjectMapper om = new ObjectMapper();
-		DeregisterImageRequest event = om.readValue(is, DeregisterImageRequest.class);
-		String imageId = event.getDetail().getRequestParameters().getImageId();
+	public void handleRequest(InputStream is, OutputStream os, Context context) {
 
 		LambdaLogger logger = context.getLogger();
-		logger.log("Deregister AMI parge snapshot Start. ImageId[" + imageId + "]");
-
 		String regionName = System.getenv("AWS_DEFAULT_REGION");
-
 		AmazonEC2Async client = RegionUtils.getRegion(regionName).createClient(AmazonEC2AsyncClient.class,
 				new DefaultAWSCredentialsProviderChain(), cc);
+		try {
+			ObjectMapper om = new ObjectMapper();
+			DeregisterImageRequest event = om.readValue(is, DeregisterImageRequest.class);
+			String imageId = event.getDetail().getRequestParameters().getImageId();
 
-		List<Snapshot> snapshots = describeSnapshot(client, imageId, context);
-		if (snapshots.size() == 0) {
-			logger.log("Target of snapshot there is nothing.");
-		} else {
-			snapshots.stream().forEach(s -> pargeSnapshot(client, s.getSnapshotId(), context));
+			logger.log("Deregister AMI parge snapshot Start. ImageId[" + imageId + "]");
+
+			List<Snapshot> snapshots = describeSnapshot(client, imageId, context);
+			if (snapshots.size() == 0) {
+				logger.log("Target of snapshot there is nothing.");
+			} else {
+				snapshots.stream().forEach(s -> pargeSnapshot(client, s.getSnapshotId(), context));
+			}
+			logger.log("[SUCCESS][DeregisterImage]has been completed successfully." + imageId);
+		} catch (Exception e) {
+			logger.log("[ERROR][DeregisterImage]An unexpected error has occurred. message[" + e.getMessage() + "]");
+		} finally {
+			client.shutdown();
 		}
-		client.shutdown();
-		logger.log("Deregister AMI parge Snapsthot End.");
 	}
 
 	private List<Snapshot> describeSnapshot(AmazonEC2Async client, String imageId, Context context) {
