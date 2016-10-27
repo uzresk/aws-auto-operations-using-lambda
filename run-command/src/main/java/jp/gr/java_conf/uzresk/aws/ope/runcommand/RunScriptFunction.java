@@ -15,11 +15,11 @@ import com.amazonaws.services.simplesystemsmanagement.model.NotificationConfig;
 import com.amazonaws.services.simplesystemsmanagement.model.SendCommandRequest;
 import com.amazonaws.services.simplesystemsmanagement.model.SendCommandResult;
 
-public class RunScript {
+public class RunScriptFunction {
 
 	private ClientConfiguration cc;
 
-	public void execute(RunScriptConfiguration rc, Context context) {
+	public void execute(RunScriptRequest rc, Context context) {
 
 		LambdaLogger logger = context.getLogger();
 		logger.log("Run Command Start. Run Configuration:[" + rc + "]");
@@ -58,6 +58,8 @@ public class RunScript {
 			r = result.get();
 			if (CommandStatus.Failed.name().equals(r.getCommand().getStatus())) {
 				logger.log("[ERROR] execution failure. Commands[" + r.toString() + "]");
+			} else {
+				logger.log("[SUCCESS]Execution of RunCommand has completed successfully.[" + rc + "]");
 			}
 		} catch (InterruptedException | ExecutionException e) {
 			logger.log("[ERROR] execution run commands." + e.getMessage());
@@ -65,8 +67,6 @@ public class RunScript {
 		} finally {
 			client.shutdown();
 		}
-
-		logger.log("Run Command End.");
 
 	}
 
@@ -81,7 +81,7 @@ public class RunScript {
 		return this.cc;
 	}
 
-	private boolean isValidSNSSettings(RunScriptConfiguration rc, Context context) {
+	private boolean isValidSNSSettings(RunScriptRequest rc, Context context) {
 
 		LambdaLogger logger = context.getLogger();
 

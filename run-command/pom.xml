@@ -41,6 +41,12 @@
 			<artifactId>aws-java-sdk-ec2</artifactId>
 			<version>1.11.39</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.10</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
