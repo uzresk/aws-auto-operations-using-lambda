@@ -32,7 +32,7 @@ import com.amazonaws.services.ec2.model.Volume;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
-public class EBSSnapshot {
+public class EBSSnapshotFunction {
 
 	private static ClientConfiguration cc = new ClientConfiguration();
 
@@ -74,7 +74,7 @@ public class EBSSnapshot {
 		}
 	}
 
-	private List<Volume> describeBackupVolumes(AmazonEC2Async client, TagNameRequest target) {
+	List<Volume> describeBackupVolumes(AmazonEC2Async client, TagNameRequest target) {
 
 		Filter tagKey = new Filter().withName("tag-key").withValues("Backup");
 		Filter tagValue = new Filter().withName("tag-value").withValues(target.getTagName());
@@ -84,7 +84,7 @@ public class EBSSnapshot {
 		return result.getVolumes();
 	}
 
-	private void createSnapshot(String volumeId, int generationCount, Context context) {
+	void createSnapshot(String volumeId, int generationCount, Context context) {
 
 		LambdaLogger logger = context.getLogger();
 
@@ -127,7 +127,7 @@ public class EBSSnapshot {
 		}
 	}
 
-	private void attachSnapshotTags(AmazonEC2Async client, String volumeId, String snapshotId) {
+	void attachSnapshotTags(AmazonEC2Async client, String volumeId, String snapshotId) {
 
 		List<Tag> tags = new ArrayList<Tag>();
 		tags.add(new Tag("VolumeId", volumeId));
@@ -138,12 +138,11 @@ public class EBSSnapshot {
 		client.createTags(snapshotTagsRequest);
 	}
 
-	public void pargeEbsSnapshot(AmazonEC2Async client, String volumeId, int generationCount, Context context) {
+	void pargeEbsSnapshot(AmazonEC2Async client, String volumeId, int generationCount, Context context) {
 
 		LambdaLogger logger = context.getLogger();
 		logger.log("Parge snapshot start. VolumeId[" + volumeId + "] generationCount[" + generationCount + "]");
 
-		// volume id をキーにsnapshotの一覧を取得します。
 		List<Filter> filters = new ArrayList<>();
 		filters.add(new Filter().withName("volume-id").withValues(volumeId));
 		filters.add(new Filter().withName("tag:VolumeId").withValues(volumeId));
@@ -151,16 +150,13 @@ public class EBSSnapshot {
 		DescribeSnapshotsRequest snapshotRequest = new DescribeSnapshotsRequest().withFilters(filters);
 		DescribeSnapshotsResult snapshotResult = client.describeSnapshots(snapshotRequest);
 
-		// snapshot作成開始日でソートします。（古い→新しい）
 		List<Snapshot> snapshots = snapshotResult.getSnapshots();
 		Collections.sort(snapshots, new SnapshotComparator());
 
-		// 世代管理保持数 < snapshotの数の場合、対象をpargeします。
 		int snapshotSize = snapshots.size();
 		if (generationCount < snapshotSize) {
 			for (int i = 0; i < snapshotSize - generationCount; i++) {
 				Snapshot snapshot = snapshots.get(i);
-				// （念のため）snapshotのステータスが完了しているものだけをparge対象とする。
 				if (SnapshotState.Completed.toString().equals(snapshot.getState())) {
 					String snapshotId = snapshot.getSnapshotId();
 					pargeSnapshot(client, snapshotId);
@@ -179,17 +175,16 @@ public class EBSSnapshot {
 		}
 	}
 
-	private void pargeSnapshot(AmazonEC2 ec2, String snapshotId) {
+	void pargeSnapshot(AmazonEC2 ec2, String snapshotId) {
 		DeleteSnapshotRequest request = new DeleteSnapshotRequest(snapshotId);
 		ec2.deleteSnapshot(request);
 	}
 
-	protected String getStackTrace(Exception e) {
+	String getStackTrace(Exception e) {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		e.printStackTrace(pw);
 		pw.flush();
 		return sw.toString();
 	}
-
 }
