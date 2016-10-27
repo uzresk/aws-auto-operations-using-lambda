@@ -4,7 +4,7 @@ DeregisterAMI: At the timing of the AMI is deregistration to remove the EBS snap
 Usage
 -----
 
-To create a role that is set to LambdaFunction (DeregisterAMIExecLambdaRole)
+To create a role that is set to LambdaFunction (LambdaDeregisterImageRole)
 
     {
         "Version": "2012-10-17",
@@ -35,9 +35,9 @@ To create a role that is set to LambdaFunction (DeregisterAMIExecLambdaRole)
 
 To create a LambdaFunction
 
-- Name: DeleteSnapshotWhenDeregisterAMI
+- Name: DeregisterImage
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.ami.DeregisterAMI::handleRequest
+- Handler: jp.gr.java_conf.uzresk.aws.ope.image.DeregisterImageFunction::handleRequest
 - Role: DeregisterAMIExecRole
 - Memory: 512
 - Timeout: According to the number of target
@@ -47,5 +47,5 @@ Setting the Cloudwatch event
 - EventSource: AWS API call
 - Service name: EC2
 - Specific operations: DeregisterImage
-- Target：Lambda function -> DeregisterAMI
+- Target：Lambda function -> DeregisterImage
 - Configure input: Matched event

@@ -1,4 +1,4 @@
-package jp.gr.java_conf.uzresk.aws.ope.ami;
+package jp.gr.java_conf.uzresk.aws.ope.image;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +21,7 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DeregisterAMI implements RequestStreamHandler {
+public class DeregisterImageFunction implements RequestStreamHandler {
 
 	private static ClientConfiguration cc = new ClientConfiguration();
 
@@ -29,7 +29,7 @@ public class DeregisterAMI implements RequestStreamHandler {
 	public void handleRequest(InputStream is, OutputStream os, Context context) throws IOException {
 
 		ObjectMapper om = new ObjectMapper();
-		DeregisterAMIEvent event = om.readValue(is, DeregisterAMIEvent.class);
+		DeregisterImageRequest event = om.readValue(is, DeregisterImageRequest.class);
 		String imageId = event.getDetail().getRequestParameters().getImageId();
 
 		LambdaLogger logger = context.getLogger();
