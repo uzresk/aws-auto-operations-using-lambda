@@ -37,6 +37,9 @@ import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jp.gr.java_conf.uzresk.aws.ope.image.model.ImageCreateRequest;
+import jp.gr.java_conf.uzresk.aws.ope.image.model.ImageStateCheckAndPargeRequest;
+
 public class ImageStateCheckAndPargeFunction {
 
 	private ClientConfiguration cc;

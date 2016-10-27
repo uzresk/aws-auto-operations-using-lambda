@@ -15,9 +15,9 @@ regularly instance by polling has been successfully start or stop.
 Usage
 -----
 
-To create a role that is set to LambdaFunction (StartInstanceFunctionRole)
+To create a role that is set to LambdaFunction (LambdaInstanceRole)
 
-     {
+    {
         "Version": "2012-10-17",
         "Statement": [
             {
@@ -57,38 +57,38 @@ To create a role that is set to LambdaFunction (StartInstanceFunctionRole)
         ]
     }
 
-StartInstance/StopInstance
+InstanceStart/InstanceStop
 -----
 
 To create a LambdaFunction
 
-- Name: StartInstanceRequest
+- Name: InstanceStartRequest
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.instance.Start::request or jp.gr.java_conf.uzresk.aws.ope.instance.Start::request
-- Role: StartInstanceFunctionRole or StopInstanceFunctionRole
+- Handler: jp.gr.java_conf.uzresk.aws.ope.instance.InstanceStartFunction::request or jp.gr.java_conf.uzresk.aws.ope.instance.InstanceStopFunction::request
+- Role: InstanceStartFunctionRole or InstanceStopFunctionRole
 - Memory: 512
 - Timeout: According to the number of target
 
 Setting the Cloudwatch event
 
 - EventSource: Schedule（Any Timing）
-- Target：Lambda function -> StartInstanceRequest or StopInstanceRequest
+- Target：Lambda function -> InstanceStartRequest or InstanceStopRequest
 - Configure input: constant(JSON text)
 
-- StartInstance
+- InstanceStart
 
     {
       "instanceId": "i-xxxxxxxx",
-      "queueName": "StartInstanceQueue",
+      "queueName": "InstanceStartQueue",
       "sqsEndpoint": "https://sqs.ap-northeast-1.amazonaws.com",
       "instanceStateCheckTimeoutSec": 300
     }
 
-- StopInstance
+- InstanceStop
 
     {
       "instanceId": "i-xxxxxxxx",
-      "queueName": "StopInstanceQueue",
+      "queueName": "InstanceStopQueue",
       "sqsEndpoint": "https://sqs.ap-northeast-1.amazonaws.com",
       "instanceStateCheckTimeoutSec":300
     }
@@ -106,51 +106,51 @@ Start and Stop of Multiple Instances
 
 To create a LambdaFunction
 
-- Name: StartInstanceRequests
+- Name: InstanceStartRequests
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.instance.Start::requests or jp.gr.java_conf.uzresk.aws.ope.instance.Start::requests
-- Role: StartInstanceFunctionRole or StopInstanceFunctionRole
+- Handler: jp.gr.java_conf.uzresk.aws.ope.instance.InstanceStartFunction::requests or jp.gr.java_conf.uzresk.aws.ope.instance.InstanceStopFunction::requests
+- Role: InstanceStartFunctionRole or InstanceStopFunctionRole
 - Memory: 512
 - Timeout: According to the number of target
 
 Setting the Cloudwatch event
 
 - EventSource: Schedule（Any Timing）
-- Target：Lambda function -> StartInstanceRequest or StopInstanceRequest
+- Target：Lambda function -> InstanceStartRequest or InstanceStopRequest
 - Configure input: constant(JSON text)
 
-- StartInstance
+- InstanceStart
 
     {
       "instanceRequests": [
         {
           "instanceId": "i-xxxxxxxx",
-          "queueName": "StartInstanceQueue",
+          "queueName": "InstanceStartQueue",
           "sqsEndpoint": "https://sqs.ap-northeast-1.amazonaws.com",
           "instanceStateCheckTimeoutSec": 300
         },
         {
           "instanceId": "i-yyyyyyyy",
-          "queueName": "StartInstanceQueue",
+          "queueName": "InstanceStartQueue",
           "sqsEndpoint": "https://sqs.ap-northeast-1.amazonaws.com",
           "instanceStateCheckTimeoutSec": 300
         }
       ]
     }
-    
-- StopInstance
+
+- InstanceStop
 
     {
       "instanceRequests": [
         {
           "instanceId": "i-xxxxxxxx",
-          "queueName": "StopInstanceQueue",
+          "queueName": "InstanceStopQueue",
           "sqsEndpoint": "https://sqs.ap-northeast-1.amazonaws.com",
           "instanceStateCheckTimeoutSec": 300
         },
         {
           "instanceId": "i-yyyyyyyy",
-          "queueName": "StopInstanceQueue",
+          "queueName": "InstanceStopQueue",
           "sqsEndpoint": "https://sqs.ap-northeast-1.amazonaws.com",
           "instanceStateCheckTimeoutSec": 300
         }
@@ -162,21 +162,21 @@ CheckInstanceStateRunning
 
 To create a LambdaFunction
 
-- Name: CheckInstanceStateRunning
+- Name: InstanceCheckStateRunning
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.instance.Start::checkInstanceState
-- Role: StartInstanceFunctionRole
+- Handler: jp.gr.java_conf.uzresk.aws.ope.instance.InstanceStartFunction::checkInstanceState
+- Role: InstanceStartFunctionRole
 - Memory: 512
 - Timeout: According to the number of target
 
 Setting the Cloudwatch event
 
 - EventSource: Schedule 1-minute intervals
-- Target：Lambda function -> CheckInstanceStateRunning
+- Target：Lambda function -> InstanceCheckStateRunning
 - Configure input: constant(JSON text)
 
     {
-      "queueName": "StartInstanceQueue",
+      "queueName": "InstanceStartQueue",
       "sqsEndpoint": "https://sqs.ap-northeast-1.amazonaws.com",
       "maxNumberOfMessages":10
     }
@@ -186,21 +186,21 @@ CheckInstanceStateStopped
 
 To create a LambdaFunction
 
-- Name: CheckInstanceStateStopped
+- Name: InstanceCheckStateStopped
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.instance.Stop::checkInstanceState
-- Role: StopInstanceFunctionRole
+- Handler: jp.gr.java_conf.uzresk.aws.ope.instance.InstanceStopFunction::checkInstanceState
+- Role: InstanceStopFunctionRole
 - Memory: 512
 - Timeout: According to the number of target
 
 Setting the Cloudwatch event
 
 - EventSource: Schedule 1-minute intervals
-- Target：Lambda function -> CheckInstanceStateStopped
+- Target：Lambda function -> InstanceCheckStateStopped
 - Configure input: constant(JSON text)
 
     {
-      "queueName": "StopInstanceQueue",
+      "queueName": "InstanceStopQueue",
       "sqsEndpoint": "https://sqs.ap-northeast-1.amazonaws.com",
       "maxNumberOfMessages":10
     }
@@ -216,7 +216,7 @@ Run the results are output to CloudWatchLogs. You'll be able to monitor if you d
 
 ex)
 
-[SUCCESS][i-cc16f452][StopInstanceRequest]Stop request of the instance has completed successfully.
+    [SUCCESS][i-cc16f452][InstanceStopRequest]Stop request of the instance has completed successfully.
 
-[ERROR][checkInstanceStatus][running]message[Status check of the instance has timed out.InstanceRequest [instanceId=i-cc16f452,
+    [ERROR][checkInstanceStatus][running]message[Status check of the instance has timed out.InstanceRequest [instanceId=i-cc16f452,
 

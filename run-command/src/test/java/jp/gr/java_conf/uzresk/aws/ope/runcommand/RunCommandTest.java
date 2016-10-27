@@ -12,13 +12,15 @@ import org.junit.runners.JUnit4;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.services.simplesystemsmanagement.model.NotificationEvent;
 
+import jp.gr.java_conf.uzresk.aws.ope.runcommand.model.RunScriptRequest;
+
 @RunWith(JUnit4.class)
 public class RunCommandTest {
 
 	@Test
 	public void shell() {
 
-		RunScriptConfiguration rc = new RunScriptConfiguration();
+		RunScriptRequest rc = new RunScriptRequest();
 		rc.setDocumentName("AWS-RunShellScript");
 		rc.setInstanceIds(Arrays.asList("i-xxxxxxxx"));
 
@@ -38,7 +40,7 @@ public class RunCommandTest {
 		cc.setProxyHost("PROXY_HOST");
 		cc.setProxyPort(8080);
 
-		RunScript runCommand = new RunScript();
+		RunScriptFunction runCommand = new RunScriptFunction();
 		runCommand.setClientConfiguration(cc);
 		// runCommand.execute(rc, new TestContext());
 
@@ -47,7 +49,7 @@ public class RunCommandTest {
 	@Test
 	public void powershell() {
 
-		RunScriptConfiguration rc = new RunScriptConfiguration();
+		RunScriptRequest rc = new RunScriptRequest();
 		rc.setDocumentName("AWS-RunPowerShellScript");
 		rc.setInstanceIds(Arrays.asList("i-xxxxxxxx"));
 
@@ -67,7 +69,7 @@ public class RunCommandTest {
 		cc.setProxyHost("PROXY_HOST");
 		cc.setProxyPort(8080);
 
-		RunScript runCommand = new RunScript();
+		RunScriptFunction runCommand = new RunScriptFunction();
 		runCommand.setClientConfiguration(cc);
 		// runCommand.execute(rc, new TestContext());
 	}

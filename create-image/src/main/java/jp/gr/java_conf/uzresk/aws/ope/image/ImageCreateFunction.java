@@ -22,6 +22,9 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jp.gr.java_conf.uzresk.aws.ope.image.model.ImageCreateRequest;
+import jp.gr.java_conf.uzresk.aws.ope.image.model.ImageCreateRequests;
+
 public class ImageCreateFunction {
 
 	private ClientConfiguration cc;

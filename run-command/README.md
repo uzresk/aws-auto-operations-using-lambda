@@ -119,7 +119,7 @@ To create a LambdaFunction
 
 - Name: RunScript
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.runcommand.RunScript::execute
+- Handler: jp.gr.java_conf.uzresk.aws.ope.runcommand.RunScriptFunction::execute
 - Role: RunScriptRole
 - Memory: 512
 - Timeout: According to the number of target

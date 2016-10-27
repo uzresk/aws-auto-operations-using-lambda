@@ -51,7 +51,7 @@ To create a LambdaFunction
 
 - Name: EBSSnapshotFromVolumeId
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSSnapshot::createSnapshotFromVolumeId
+- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSSnapshotFunction::createSnapshotFromVolumeId
 - Role: LambdaEBSSnapshotRole
 - Memory: 512
 - Timeout: According to the number of target
@@ -76,7 +76,7 @@ To create a LambdaFunction
 
 - Name: EBSSnapshotFromVolumeIds
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSSnapshot::createSnapshotFromVolumeIds
+- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSSnapshotFunction::createSnapshotFromVolumeIds
 - Role: LambdaEBSSnapshotRole
 - Memory: 512
 - Timeout: According to the number of target
@@ -109,7 +109,7 @@ To create a LambdaFunction
 
 - Name: EBSSnapshotFromTagName
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSSnapshot::createSnapshotFromTagName
+- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSSnapshotFunction::createSnapshotFromTagName
 - Role: LambdaEBSSnapshotRole
 - Memory: 512
 - Timeout: According to the number of target
@@ -126,7 +126,7 @@ Setting the Cloudwatch event
       "generationCount": 2
     }
  ```
- 
+
 Setting the Backup tag and GenerationCount tag in Volume to be EBSSnapshot target.
 
 - The GenerationCount to set the number of generation management. If you omit the GenerationCount, generation management number is 10 by default

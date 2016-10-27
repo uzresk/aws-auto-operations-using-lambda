@@ -52,7 +52,7 @@ To create a LambdaFunction
 
 - Name: EBSCopySnapshotFromVolumeId
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSCopySnapshot::copySnapshotFromVolumeId
+- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSCopySnapshotFunction::copySnapshotFromVolumeId
 - Role: LambdaEBSCopySnapshotRole
 - Memory: 512
 - Timeout: According to the number of target
@@ -78,7 +78,7 @@ To create a LambdaFunction
 
 - Name: EBSCopySnapshotFromVolumeIds
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSCopySnapshot::copySnapshotFromVolumeIds
+- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSCopySnapshotFunction::copySnapshotFromVolumeIds
 - Role: LambdaEBSCopySnapshotRole
 - Memory: 512
 - Timeout: According to the number of target
@@ -113,7 +113,7 @@ To create a LambdaFunction
 
 - Name: EBSCopySnapshotFromSnapshotId
 - Runtime: Java8
-- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSCopySnapshot::copySnapshotFromSnapshotId
+- Handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSCopySnapshotFunction::copySnapshotFromSnapshotId
 - Role: LambdaEBSCopySnapshotRole
 - Memory: 512
 - Timeout: According to the number of target

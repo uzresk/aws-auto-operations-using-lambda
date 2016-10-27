@@ -24,6 +24,9 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jp.gr.java_conf.uzresk.aws.ope.instance.model.InstanceCheckStateRequest;
+import jp.gr.java_conf.uzresk.aws.ope.instance.model.InstanceRequest;
+
 public class InstanceOperation {
 
 	private ClientConfiguration cc;
@@ -46,7 +49,7 @@ public class InstanceOperation {
 	}
 
 	public void checkInstanceState(Message message, String stateName,
-			CheckInstanceStateRequest checkInstanceStateRequest, Context context) {
+			InstanceCheckStateRequest checkInstanceStateRequest, Context context) {
 
 		LambdaLogger logger = context.getLogger();
 
@@ -130,7 +133,7 @@ public class InstanceOperation {
 		}
 	}
 
-	protected void deleteQueueMessage(Message message, CheckInstanceStateRequest checkInstanceStateRequest,
+	protected void deleteQueueMessage(Message message, InstanceCheckStateRequest checkInstanceStateRequest,
 			Context context) {
 
 		AmazonSQSAsync client = createSQSClient();

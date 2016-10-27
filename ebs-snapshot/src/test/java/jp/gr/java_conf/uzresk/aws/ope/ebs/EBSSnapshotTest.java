@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import jp.gr.java_conf.uzresk.aws.ope.TestContext;
+import jp.gr.java_conf.uzresk.aws.ope.ebs.model.VolumeIdRequest;
 
 @RunWith(JUnit4.class)
 public class EBSSnapshotTest {
