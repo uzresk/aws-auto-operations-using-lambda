@@ -16,6 +16,10 @@ Provides
         - 1. To specify the volume ID in json
         - 2. To specify multiple volume ID in json
         - 3. To specify the tag that has been granted to the EBS in jso
+- [Create Image(AMI)](./create-image/README.md)
+    - Do AMI creation and generation management along the set schedule in CloudWatchEvents. 
+        - 1. To specify the instance ID in json
+        - 2. To specify multiple instance ID in json
 - [EBSCopySnapshot](./ebs-copy-snapshot/README.md)
     - Get the EBS Copy Snapshot, perform the generation management.
     - To identify the target of volume to get a snapshot There are three ways.
