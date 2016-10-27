@@ -29,7 +29,7 @@ import com.amazonaws.services.ec2.model.Tag;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
-public class EBSCopySnapshot {
+public class EBSCopySnapshotFunction {
 
 	private static ClientConfiguration cc = new ClientConfiguration();
 
@@ -102,7 +102,7 @@ public class EBSCopySnapshot {
 		}
 	}
 
-	private void copySnapshot(String sourceSnapshotId, String destinationRegion, int generationCount, Context context) {
+	void copySnapshot(String sourceSnapshotId, String destinationRegion, int generationCount, Context context) {
 
 		LambdaLogger logger = context.getLogger();
 
@@ -149,7 +149,7 @@ public class EBSCopySnapshot {
 		}
 	}
 
-	private void attachSnapshotTags(AmazonEC2Async client, String sourceSnapshotId, String snapshotId) {
+	void attachSnapshotTags(AmazonEC2Async client, String sourceSnapshotId, String snapshotId) {
 
 		DescribeSnapshotsResult result = client
 				.describeSnapshots(new DescribeSnapshotsRequest().withSnapshotIds(sourceSnapshotId));
@@ -169,7 +169,7 @@ public class EBSCopySnapshot {
 		client.createTags(snapshotTagsRequest);
 	}
 
-	public void pargeEbsSnapshot(AmazonEC2Async client, String sourceSnapshotId, String snapshotId, int generationCount,
+	void pargeEbsSnapshot(AmazonEC2Async client, String sourceSnapshotId, String snapshotId, int generationCount,
 			Context context) {
 
 		LambdaLogger logger = context.getLogger();
@@ -205,7 +205,7 @@ public class EBSCopySnapshot {
 		}
 	}
 
-	private String getVolumeIdFromTag(AmazonEC2Async client, String snapshotId) {
+	String getVolumeIdFromTag(AmazonEC2Async client, String snapshotId) {
 		List<Tag> snapshotTag = client.describeSnapshots(new DescribeSnapshotsRequest().withSnapshotIds(snapshotId))
 				.getSnapshots().get(0).getTags();
 		String volumeId = null;
@@ -230,7 +230,7 @@ public class EBSCopySnapshot {
 		}
 	}
 
-	private void pargeSnapshot(AmazonEC2 ec2, String snapshotId) {
+	void pargeSnapshot(AmazonEC2 ec2, String snapshotId) {
 		DeleteSnapshotRequest request = new DeleteSnapshotRequest(snapshotId);
 		ec2.deleteSnapshot(request);
 	}
