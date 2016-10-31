@@ -86,6 +86,16 @@ To create a role that is set to LambdaFunction (RunScriptRole)
                     "s3:ListBucketMultipartUploads"
                 ],
                 "Resource": "*"
+            },
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "dynamodb:PutItem",
+                    "dynamodb:UpdateItem"
+                ],
+                "Resource": [
+                    "arn:aws:dynamodb:ap-northeast-1:xxxxxxxxxxxx:table/lambda_locks"
+                ]
             }
         ]
     }

@@ -1,5 +1,6 @@
 package jp.gr.java_conf.uzresk.aws.ope.runcommand;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -15,6 +16,7 @@ import com.amazonaws.services.simplesystemsmanagement.model.NotificationConfig;
 import com.amazonaws.services.simplesystemsmanagement.model.SendCommandRequest;
 import com.amazonaws.services.simplesystemsmanagement.model.SendCommandResult;
 
+import jp.gr.java_conf.uzresk.aws.lambda.LambdaLock;
 import jp.gr.java_conf.uzresk.aws.ope.runcommand.model.RunScriptRequest;
 
 public class RunScriptFunction {
@@ -25,6 +27,13 @@ public class RunScriptFunction {
 
 		LambdaLogger logger = context.getLogger();
 		logger.log("Run Command Start. Run Configuration:[" + rc + "]");
+
+		List<String> instanceIds = rc.getInstanceIds();
+		boolean isLockAcquisition = new LambdaLock().lock(instanceIds.toString(), context);
+		if (!isLockAcquisition) {
+			logger.log("[ERROR][RunScript][" + instanceIds + "]You can not acquire a lock.");
+			return;
+		}
 
 		String regionName = System.getenv("AWS_DEFAULT_REGION");
 

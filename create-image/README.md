@@ -55,6 +55,16 @@ To create a role that is set to LambdaFunction (LambdaImageCreatePargeRole)
                 "Resource": [
                     "*"
                 ]
+            },
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "dynamodb:PutItem",
+                    "dynamodb:UpdateItem"
+                ],
+                "Resource": [
+                    "arn:aws:dynamodb:ap-northeast-1:xxxxxxxxxxxx:table/lambda_locks"
+                ]
             }
         ]
     }
@@ -150,12 +160,12 @@ To create a LambdaFunction
 Setting the Cloudwatch event
 
 - EventSource: Schedule 1-minute intervals
-- Target：Lambda function -> CheckInstanceStateRunning
+- Target：Lambda function -> ImageStateCheckAndParge
 - Configure input: constant(JSON text)
 
     {
       "sqsEndpoint": "https://sqs.ap-northeast-1.amazonaws.com",
-      "queueName": "CreateAMIQueue",
+      "queueName": "CreateImageQueue",
       "numberOfMessage": 10
     }
 
@@ -171,4 +181,4 @@ ex)
 
     [SUCCESS][i-01abd4db05e166adb] Creation of AMI, additional tags, generation management has completed successfully.
 
-    [ERROR][checkStateAndPargeAMI] message[You are not authorized to perform this operation.
+    [ERROR][checkStateAndPargeImage] message[You are not authorized to perform this operation.

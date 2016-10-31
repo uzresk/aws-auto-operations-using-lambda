@@ -40,6 +40,16 @@ To create a role that is set to LambdaFunction (LambdaEBSCopySnapshotRole)
                 "Resource": [
                     "*"
                 ]
+            },
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "dynamodb:PutItem",
+                    "dynamodb:UpdateItem"
+                ],
+                "Resource": [
+                    "arn:aws:dynamodb:ap-northeast-1:xxxxxxxxxxxx:table/lambda_locks"
+                ]
             }
         ]
     }
