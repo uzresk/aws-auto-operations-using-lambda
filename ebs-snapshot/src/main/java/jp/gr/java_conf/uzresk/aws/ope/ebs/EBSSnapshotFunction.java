@@ -32,13 +32,14 @@ import com.amazonaws.services.ec2.model.Volume;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
+import jp.gr.java_conf.uzresk.aws.lambda.LambdaLock;
 import jp.gr.java_conf.uzresk.aws.ope.ebs.model.TagNameRequest;
 import jp.gr.java_conf.uzresk.aws.ope.ebs.model.VolumeIdRequest;
 import jp.gr.java_conf.uzresk.aws.ope.ebs.model.VolumeIdRequests;
 
 public class EBSSnapshotFunction {
 
-	private static ClientConfiguration cc = new ClientConfiguration();
+	private ClientConfiguration cc;
 
 	public void createSnapshotFromVolumeId(VolumeIdRequest volumeIdRequest, Context context) {
 
@@ -91,6 +92,12 @@ public class EBSSnapshotFunction {
 	void createSnapshot(String volumeId, int generationCount, Context context) {
 
 		LambdaLogger logger = context.getLogger();
+
+		boolean isLockAcquisition = new LambdaLock().lock(volumeId, context);
+		if (!isLockAcquisition) {
+			logger.log("[ERROR][EBSSnapshot][" + volumeId + "]You can not acquire a lock.");
+			return;
+		}
 
 		String regionName = System.getenv("AWS_DEFAULT_REGION");
 		AmazonEC2Async client = RegionUtils.getRegion(regionName).createClient(AmazonEC2AsyncClient.class,
@@ -191,4 +198,16 @@ public class EBSSnapshotFunction {
 		pw.flush();
 		return sw.toString();
 	}
+
+	void setClientConfiguration(ClientConfiguration cc) {
+		this.cc = cc;
+	}
+
+	ClientConfiguration getClientConfiguration() {
+		if (this.cc == null) {
+			return new ClientConfiguration();
+		}
+		return this.cc;
+	}
+
 }

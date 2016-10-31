@@ -22,6 +22,7 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jp.gr.java_conf.uzresk.aws.lambda.LambdaLock;
 import jp.gr.java_conf.uzresk.aws.ope.image.model.ImageCreateRequest;
 import jp.gr.java_conf.uzresk.aws.ope.image.model.ImageCreateRequests;
 
@@ -34,12 +35,18 @@ public class ImageCreateFunction {
 		LambdaLogger logger = context.getLogger();
 
 		try {
-
-			if (request.getInstanceId() == null) {
+			String instanceId = request.getInstanceId();
+			if (instanceId == null) {
 				throw new IllegalArgumentException("instance id is null.");
 			}
 			if (request.getAmiName() == null) {
 				throw new IllegalArgumentException("AMI Name is null.");
+			}
+
+			boolean isLockAcquisition = new LambdaLock().lock(instanceId, context);
+			if (!isLockAcquisition) {
+				logger.log("[ERROR][CreateImage][" + instanceId + "]You can not acquire a lock.");
+				return;
 			}
 
 			String createAMIRequestDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
@@ -69,6 +76,7 @@ public class ImageCreateFunction {
 	String createAMI(ImageCreateRequest request, Context context) {
 
 		LambdaLogger logger = context.getLogger();
+
 		AmazonEC2Async client = createEC2Client();
 
 		String imageId = null;

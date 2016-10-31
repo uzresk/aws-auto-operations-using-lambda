@@ -29,6 +29,7 @@ import com.amazonaws.services.ec2.model.Tag;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
+import jp.gr.java_conf.uzresk.aws.lambda.LambdaLock;
 import jp.gr.java_conf.uzresk.aws.ope.ebs.model.SnapshotIdRequest;
 import jp.gr.java_conf.uzresk.aws.ope.ebs.model.SnapshotIdRequests;
 import jp.gr.java_conf.uzresk.aws.ope.ebs.model.VolumeIdRequest;
@@ -72,6 +73,13 @@ public class EBSCopySnapshotFunction {
 
 		try {
 			String volumeId = volumeIdRequest.getVolumeId();
+
+			boolean isLockAcquisition = new LambdaLock().lock(volumeId, context);
+			if (!isLockAcquisition) {
+				logger.log("[ERROR][EBSCopySnapshot][" + volumeId + "]You can not acquire a lock.");
+				return;
+			}
+
 			List<Filter> filters = new ArrayList<>();
 			filters.add(new Filter().withName("volume-id").withValues(volumeId));
 			filters.add(new Filter().withName("tag:VolumeId").withValues(volumeId));
