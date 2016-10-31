@@ -32,6 +32,20 @@ Provides
      - Run ShellScript, Powershell using AWS RunCommand
      - On a regular basis by combining the Cloudwatch events can be used to execute commands on EC2
 
+Setting of common
+-----------------------------
+It may be called multiple times and call the Lambda from CloudwatchEvent.
+In order to prevent the creation or deletion of unexpected resources, it has secured the idempotence using DynamoDB.
+
+Please be sure that you create the following table
+
+- table_name: lambda_locks
+- primary_key: function_name(String)
+- partition_key: key(String)
+
+VolumeID is stored if EBSSnapshot the key. If the creation of Image instanceID is stored
+
+
 Author
 ----------------------------
 [uzresk](https://twitter.com/uzresk)
