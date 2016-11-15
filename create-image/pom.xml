@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>jp.gr.java_conf.uzresk.aws.ope</groupId>
-	<artifactId>image</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>create-image</artifactId>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 	<name>image</name>
 

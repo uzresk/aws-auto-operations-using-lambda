@@ -37,6 +37,7 @@ import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jp.gr.java_conf.uzresk.aws.lambda.LambdaLock;
 import jp.gr.java_conf.uzresk.aws.ope.image.model.ImageCreateRequest;
 import jp.gr.java_conf.uzresk.aws.ope.image.model.ImageStateCheckAndPargeRequest;
 
@@ -88,6 +89,7 @@ public class ImageStateCheckAndPargeFunction {
 
 		LambdaLogger logger = context.getLogger();
 
+		// parse sqs message
 		ObjectMapper om = new ObjectMapper();
 		ImageCreateRequest createAMIRequest;
 		try {
@@ -95,6 +97,14 @@ public class ImageStateCheckAndPargeFunction {
 		} catch (IOException e) {
 			deleteQueueMessage(message, request, context);
 			throw new RuntimeException("SQS message could not be parsed");
+		}
+
+		// Control multiple activation of Lambda
+		String instanceId = createAMIRequest.getInstanceId();
+		boolean isLockAcquisition = new LambdaLock().lock(instanceId, context);
+		if (!isLockAcquisition) {
+			logger.log("[ERROR][ImageStateCheckAndParge][" + instanceId + "]You can not acquire a lock.");
+			return;
 		}
 
 		long sendMessageTime = createAMIRequest.getSendMessageTimeMillis()

@@ -99,9 +99,6 @@ public final class LambdaLock {
 		try {
 			long sec = currentTimeMillis - expiredIntervalMillis;
 
-			context.getLogger().log("currentTime[" + currentTimeMillis + "]");
-			context.getLogger().log("expiredTime[" + sec + "]");
-
 			DynamoDB dynamoDB = new DynamoDB(client);
 			Table table = dynamoDB.getTable(TABLE_NAME);
 

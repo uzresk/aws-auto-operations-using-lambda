@@ -4,7 +4,7 @@
 
 	<groupId>jp.gr.java_conf.uzresk.aws.ope</groupId>
 	<artifactId>deregister-ami</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 	<name>deregister-ami</name>
 
