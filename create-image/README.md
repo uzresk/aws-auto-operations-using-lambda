@@ -93,7 +93,7 @@ Setting the Cloudwatch event
       "noReboot": true,
       "generationCount": 2,
       "sqsEndpoint": "https://sqs.ap-northeast-1.amazonaws.com",
-      "queueName": "CreateAMIQueue",
+      "queueName": "CreateImageQueue",
       "imageCreatedTimeoutSec": 6000
     }
 
@@ -130,7 +130,7 @@ Setting the Cloudwatch event
           "noReboot": true,
           "generationCount": 2,
           "sqsEndpoint": "https://sqs.ap-northeast-1.amazonaws.com",
-          "queueName": "CreateAMIQueue",
+          "queueName": "CreateImageQueue",
           "imageCreatedTimeoutSec": 6000
         },
         {
@@ -139,7 +139,7 @@ Setting the Cloudwatch event
           "noReboot": true,
           "generationCount": 2,
           "sqsEndpoint": "https://sqs.ap-northeast-1.amazonaws.com",
-          "queueName": "CreateAMIQueue",
+          "queueName": "CreateImageQueue",
           "imageCreatedTimeoutSec": 6000
         }
       ]
