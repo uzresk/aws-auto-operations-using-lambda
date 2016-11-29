@@ -26,7 +26,7 @@ Provides
         - 1. To specify the volume ID in json
         - 2. To specify multiple volume ID in json
         - 3. To specify the snapshot ID in json
-- [DeregisterAMI](./deregister-ami/README.md)
+- [DeregisterImage](./deregister-image/README.md)
      - At the timing of the AMI is deregistration to remove the EBS snapshot
 - [RunCommand](./run-command/README.md)
      - Run ShellScript, Powershell using AWS RunCommand
