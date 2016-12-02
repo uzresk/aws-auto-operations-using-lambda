@@ -1,0 +1,1 @@
+{"amiName":"create by lambda","generationCount":1,"instanceId":"i-xxxxxxxxxxxxxx","instanceStateCheckTimeoutSec":6000,"noReboot":true,"queueName":"CreateImageQueue","sqsEndpoint":"https://sqs.ap-northeast-1.amazonaws.com"}

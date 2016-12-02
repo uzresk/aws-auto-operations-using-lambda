@@ -1,0 +1,18 @@
+---
+- name: create cloudwatch events
+  cloudwatchevent_rule:
+    name: "{{ item.0.rule_name }}"
+    description: "{{ item.0.description }}"
+    state: present
+    schedule_expression: "{{ item.0.schedule_expression }}"
+    targets:
+      - id: "{{ item.1.name }}"
+        arn: "{{ item.2.ansible_facts.function_arn }}"
+        input: "{{ lookup('file', './{{ item.0.input }}', convert_data=False) |string }}"
+  register: events
+  with_together:
+      - "{{ cloudwatch_events }}"
+      - "{{ lambda_functions }}"
+      - "{{ function_arns.results }}"
+  tags: [create-cloudwatchevents]
+

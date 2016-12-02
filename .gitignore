@@ -7,4 +7,5 @@
 .git-rewrite/
 .idea/
 *.iml
-
+*.retry
+*.jar

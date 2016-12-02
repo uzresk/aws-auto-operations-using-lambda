@@ -1,0 +1,23 @@
+---
+release_jar:
+  name: deregister-ami.jar
+  url: https://github.com/uzresk/aws-auto-operations-using-lambda/releases/download/0.0.1/deregister-ami-0.0.1.jar
+s3:
+  bucket_name: BUCKET_NAME
+lambda_functions:
+  - name: deregisterImage
+    description: Delete the EBS Snapshot attached at the timing when AMI was deleted
+    handler: jp.gr.java_conf.uzresk.aws.ope.image.DeregisterImageFunction::handleRequest
+    timeout: 60
+    memory_size: 512
+iam:
+  role_name: LambdaDeregisterImageRole
+  policy_name: LambdaDeregisterImagePolicy
+cloudwatch_events:
+  - rule_name: DeleteSnapshotWhenDeregisterImageRule
+    description: Delete the EBS Snapshot attached at the timing when AMI was deleted
+    event_pattern: event-pattern.json
+dynamodb:
+  table_name: lambda_locks
+  read_capacity: 1
+  write_capacity: 1

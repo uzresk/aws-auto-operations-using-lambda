@@ -1,0 +1,9 @@
+---
+- name: get role arn
+  command: "aws iam get-role --role-name {{ iam.role_name }}"
+  changed_when: false
+  register: role
+
+- set_fact:
+    role_arn: "{{ (role.stdout|from_json).Role.Arn }}"
+
