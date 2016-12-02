@@ -14,7 +14,7 @@ Setup
 install ansible 2.2,aws cli, boto, boto3. If it is troublesome, please use the Docker container containing ansible 2.2, aws cli, boto, boto 3
 
 ```
-docker run -v /vagrant:/vagrant -it --name tmp uzresk/centos7-ansible-serverspec:ansible-v2.2.0.0-1 /bin/bash --login
+docker run -it --name tmp uzresk/centos7-ansible-serverspec:ansible-v2.2.0.0-1 /bin/bash --login
 ```
 
 set up aws credentials(~/.aws/credentials), 
