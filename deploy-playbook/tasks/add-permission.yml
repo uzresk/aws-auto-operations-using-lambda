@@ -1,0 +1,19 @@
+---
+- debug: msg="{{ item.rule.arn }}"
+  with_items:
+    - "{{ events.results }}"
+
+- name: aws lambda add-permission
+  command: >-
+    aws lambda add-permission
+    --function-name {{ item.0.name }}
+    --statement-id {{ item.0.name }} 
+    --action "lambda:InvokeFunction"
+    --principal events.amazonaws.com
+    --source-arn {{ item.1.rule.arn }}
+  register: add_permission
+  with_together:
+    - "{{ lambda_functions }}"
+    - "{{ events.results }}"
+  changed_when: "{{ 'provided already exists' not in add_permission.stderr }}"
+  failed_when: "{{ add_permission.rc != 0 }} and {{ 'provided already exists' not in add_permission.stderr }}"

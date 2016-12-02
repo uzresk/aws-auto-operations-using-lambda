@@ -1,0 +1,24 @@
+---
+release_jar:
+  name: ebs-snapshot.jar
+  url: https://github.com/uzresk/aws-auto-operations-using-lambda/releases/download/0.0.1/ebs-snapshot-0.0.1.jar
+s3:
+  bucket_name: BUCKET_NAME
+lambda_functions:
+  - name: createEBSSnapshotFromVolumeId
+    description: create snapshot and generation management
+    handler: jp.gr.java_conf.uzresk.aws.ope.ebs.EBSSnapshotFunction::createSnapshotFromVolumeId
+    timeout: 60
+    memory_size: 512
+iam:
+  role_name: LambdaEBSSnapshotCreateRole
+  policy_name: LambdaEBSSnapshotCreatePolicy
+cloudwatch_events:
+  - rule_name: CreateEBSSnapshotFromVolumeIdRule
+    description: vol-xxxxxxxxxxxxxxx Every Day am 1:00(JST)
+    schedule_expression: cron(0 16 * * ? *)
+    input: input_EBSSnapshot.json
+dynamodb:
+  table_name: lambda_locks
+  read_capacity: 1
+  write_capacity: 1

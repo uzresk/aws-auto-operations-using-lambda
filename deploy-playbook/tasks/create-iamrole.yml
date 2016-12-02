@@ -1,0 +1,25 @@
+---
+- name: create role using lambda
+  iam:
+    iam_type: role
+    name: "{{ iam.role_name }}"
+    state: present
+    trust_policy:
+      Version: '2012-10-17'
+      Statement:
+      - Action: sts:AssumeRole
+        Effect: Allow
+        Principal:
+          Service: lambda.amazonaws.com
+      - Action: sts:AssumeRole
+        Effect: Allow
+        Principal:
+          Service: events.amazonaws.com
+
+- name: attatch policy
+  iam_policy:
+    iam_type: role
+    iam_name: "{{ iam.role_name }}"
+    state: present
+    policy_name: "{{ iam.policy_name }}"
+    policy_document: policy.json

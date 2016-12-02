@@ -1,0 +1,29 @@
+---
+release_jar:
+  name: instance.jar
+  url: https://github.com/uzresk/aws-auto-operations-using-lambda/releases/download/0.0.1/instance-0.0.1.jar
+s3:
+  bucket_name: BUCKET_NAME
+lambda_functions:
+  - name: startInstance
+    description: startInstance
+    handler: jp.gr.java_conf.uzresk.aws.ope.instance.InstanceStartFunction::request
+    timeout: 60
+    memory_size: 512
+  - name: checkInstanceStateRunning
+    description: Periodically check the running state of instance
+    handler: jp.gr.java_conf.uzresk.aws.ope.instance.InstanceStartFunction::checkInstanceState
+    timeout: 60
+    memory_size: 512
+iam:
+  role_name: LambdaInstanceRole
+  policy_name: LambdaInstancePolicy
+cloudwatch_events:
+  - rule_name: StartInstanceRule
+    description: start i-xxxxxxxxxxxxxxx Every Day am 1:00(JST)
+    schedule_expression: cron(0 16 * * ? *)
+    input: input_StartInstanceRule.json
+  - rule_name: CheckInstanceStateStartRule
+    description: Every 1 minutes am 1:00(JST) - am 2:00(JST)
+    schedule_expression: cron(* 16-17 * * ? *)
+    input: input_CheckInstanceStateStartRule.json

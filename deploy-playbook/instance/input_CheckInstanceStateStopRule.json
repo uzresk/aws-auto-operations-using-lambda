@@ -1,0 +1,1 @@
+{"queueName":"InstanceStopQueue","sqsEndpoint":"https://sqs.ap-northeast-1.amazonaws.com","maxNumberOfMessages":10}

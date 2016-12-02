@@ -1,0 +1,20 @@
+---
+- name: get release jar
+  get_url:
+    url: "{{ release_jar.url }}"
+    dest: ./{{ release_jar.name }}
+    validate_certs: no
+
+- name: create s3 bucket
+  s3:
+    bucket: "{{ s3.bucket_name }}"
+    mode: create
+    permission: private
+
+- name: put release.jar
+  s3:
+    bucket: "{{ s3.bucket_name }}"
+    mode: put
+    object: "{{ release_jar.name }}"
+    src: ./{{ release_jar.name }}
+    overwrite: different

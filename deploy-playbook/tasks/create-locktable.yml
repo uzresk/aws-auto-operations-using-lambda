@@ -1,0 +1,10 @@
+---
+- name: create locktable in dynamoDB
+  dynamodb_table:
+    name: "{{ dynamodb.table_name }}"
+    hash_key_name: function_name
+    hash_key_type: STRING
+    range_key_name: key
+    range_key_type: STRING
+    read_capacity: "{{ dynamodb.read_capacity }}"
+    write_capacity: "{{ dynamodb.write_capacity }}"

@@ -1,0 +1,33 @@
+---
+release_jar:
+  name: create-image.jar
+  url: https://github.com/uzresk/aws-auto-operations-using-lambda/releases/download/0.0.1/create-image-0.0.1.jar
+s3:
+  bucket_name: CHANGE_BUCKET_NAME
+lambda_functions:
+  - name: createImage
+    description: Create images and manage generation
+    handler: jp.gr.java_conf.uzresk.aws.ope.image.ImageCreateFunction::request
+    timeout: 60
+    memory_size: 512
+  - name: checkImageStateAndParge
+    description: Periodically check the state of image and do generation management
+    handler: jp.gr.java_conf.uzresk.aws.ope.image.ImageStateCheckAndPargeFunction::request
+    timeout: 60
+    memory_size: 512
+iam:
+  role_name: LambdaImageCreateRole
+  policy_name: LambdaImageCreatePolicy
+cloudwatch_events:
+  - rule_name: CreateImageRule
+    description: i-xxxxxxxxxxxxxxx Every Day am 1:00(JST)
+    schedule_expression: cron(0 0 * * ? *)
+    input: input_CreateImageRule.json
+  - rule_name: CheckImageStateAndPargeRule
+    description: Every 1 minutes am 1:00(JST) - am 2:00(JST)
+    schedule_expression: cron(* 16-17 * * ? *)
+    input: input_CheckImageStateAndPargeRule.json
+dynamodb:
+  table_name: lambda_locks
+  read_capacity: 1
+  write_capacity: 1

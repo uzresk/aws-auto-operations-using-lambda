@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  become: yes 
+  tasks:
+    - include: ../tasks/upload-module.yml
+      tags: [upload-module]
+
+    - include: ../tasks/create-iamrole.yml
+      tags: [create-function]
+
+    - include: ../tasks/get-rolearn.yml
+      tags: [create-function, create-cloudwatchevents, get-rolearn]
+
+    - include: ../tasks/create-function.yml
+      tags: [create-function]
+
+    - include: ../tasks/get-functionarn.yml
+      tags: [create-function, create-cloudwatchevents, get-functionarn]
+
+    - include: ../tasks/create-cloudwatchevents-schedule.yml
+      tags: [create-cloudwatchevents]
+
+    - include: ../tasks/add-permission.yml
+      tags: [create-cloudwatchevents]
+
+  vars_files:
+    - stop_vars.yml
+    

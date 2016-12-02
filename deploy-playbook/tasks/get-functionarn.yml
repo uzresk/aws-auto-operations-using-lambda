@@ -1,0 +1,17 @@
+---
+- name: get function arn
+  command: "aws lambda get-function --function-name {{ item.name }}"
+  changed_when: false
+  register: function
+  with_items: "{{ lambda_functions }}"
+  tags: getf
+
+- debug: var=function
+  tags: getf
+
+- set_fact:
+    function_arn: "{{ (item.stdout|from_json).Configuration.FunctionArn }}"
+  with_items: "{{ function.results }}"
+  register: function_arns
+  tags: getf
+

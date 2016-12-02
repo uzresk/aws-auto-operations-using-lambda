@@ -1,0 +1,1 @@
+{"instanceId":"i-xxxxxxxxxxxxxxxx","queueName":"InstanceStartQueue","sqsEndpoint":"https://sqs.ap-northeast-1.amazonaws.com","instanceStateCheckTimeoutSec":300}

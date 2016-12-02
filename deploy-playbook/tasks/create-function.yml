@@ -1,0 +1,16 @@
+---
+- name: create lambda function
+  lambda:
+    name: "{{ item.name }}"
+    description: "{{ item.description }}"
+    state: present
+    runtime: java8
+    role: "{{ role_arn }}"
+    timeout: "{{ item.timeout }}"
+    handler: "{{ item.handler }}"
+    memory_size: "{{ item.memory_size }}"
+    s3_bucket: "{{ s3.bucket_name }}"
+    s3_key: "{{ release_jar.name }}"
+    s3_object_version: ""
+  with_items: "{{ lambda_functions }}"
+
